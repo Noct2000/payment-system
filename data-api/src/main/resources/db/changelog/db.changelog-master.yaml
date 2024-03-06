@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - include:
+      file: classpath:/db/changelog/changes/001-create-bank-account-table.sql
+  - include:
+      file: classpath:/db/changelog/changes/002-create-payment-table.sql
+  - include:
+      file: classpath:/db/changelog/changes/003-create-bank_transaction-table.sql
+  - include:
+      file: classpath:/db/changelog/changes/004-init-bank_account-table.sql
+  - include:
+      file: classpath:/db/changelog/changes/005-add-bank-account-sequence.sql
+  - include:
+      file: classpath:/db/changelog/changes/006-add-payment-sequence.sql
+  - include:
+      file: classpath:/db/changelog/changes/007-add-bank_transaction-sequence.sql
