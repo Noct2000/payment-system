@@ -2,6 +2,7 @@ package com.example.data.api.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,10 +35,10 @@ public class Payment {
     private Long id;
     @Column(nullable = false)
     private String inn;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payer_id")
     private BankAccount payer;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id")
     private BankAccount recipient;
     @Column(nullable = false, length = 6)
