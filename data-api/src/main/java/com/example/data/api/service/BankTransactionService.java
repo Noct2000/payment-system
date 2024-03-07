@@ -14,4 +14,6 @@ public interface BankTransactionService extends CrudService<BankTransaction> {
     BankTransaction updateByRequestDto(
             UpdateBankTransactionRequestDto updateBankTransactionRequestDto
     );
+
+    BankTransaction rollbackById(Long id);
 }

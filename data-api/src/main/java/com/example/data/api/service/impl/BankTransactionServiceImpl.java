@@ -1,6 +1,7 @@
 package com.example.data.api.service.impl;
 
 import com.example.data.api.dto.request.UpdateBankTransactionRequestDto;
+import com.example.data.api.exception.BankTransactionStatusException;
 import com.example.data.api.exception.DebitException;
 import com.example.data.api.mapper.BankTransactionMapper;
 import com.example.data.api.model.BankAccount;
@@ -35,19 +36,7 @@ public class BankTransactionServiceImpl implements BankTransactionService {
     public BankTransaction createWithDebiting(BankTransaction bankTransaction) {
         BankAccount payer = bankTransaction.getPayment().getPayer();
         BankAccount recipient = bankTransaction.getPayment().getRecipient();
-        BigDecimal restPayerAmount = payer.getAmount().subtract(bankTransaction.getAmount());
-        if (restPayerAmount.signum() < 0) {
-            throw new DebitException(
-                    "Not enough money in account with id: "
-                            + payer.getId()
-                            + "; required: " + bankTransaction.getAmount()
-                            + ", actual: " + payer.getAmount()
-                    );
-        }
-        payer.setAmount(restPayerAmount);
-        recipient.setAmount(recipient.getAmount().add(bankTransaction.getAmount()));
-        bankAccountService.save(payer);
-        bankAccountService.save(recipient);
+        transferMoney(bankTransaction, payer, recipient);
         save(bankTransaction);
         return bankTransaction;
     }
@@ -71,6 +60,24 @@ public class BankTransactionServiceImpl implements BankTransactionService {
         BankTransaction bankTransaction = bankTransactionMapper
                 .toModelFromUpdateDto(updateBankTransactionRequestDto, payment);
         return update(bankTransaction);
+    }
+
+    @Override
+    @Transactional
+    public BankTransaction rollbackById(Long id) {
+        BankTransaction bankTransaction = getById(id);
+        BankAccount payer = bankTransaction.getPayment().getPayer();
+        BankAccount recipient = bankTransaction.getPayment().getRecipient();
+        if (bankTransaction.getStatus() == BankTransaction.Status.CANCELLED) {
+            throw new BankTransactionStatusException(
+                    "Transaction with id "
+                            + id + " already canceled"
+            );
+        }
+        bankTransaction.setStatus(BankTransaction.Status.CANCELLED);
+        transferMoney(bankTransaction, recipient, payer);
+        save(bankTransaction);
+        return bankTransaction;
     }
 
     @Override
@@ -107,5 +114,25 @@ public class BankTransactionServiceImpl implements BankTransactionService {
         }
         bankTransactionRepository.save(entity);
         return entity;
+    }
+
+    private void transferMoney(
+            BankTransaction bankTransaction,
+            BankAccount payer,
+            BankAccount recipient
+    ) {
+        BigDecimal restPayerAmount = payer.getAmount().subtract(bankTransaction.getAmount());
+        if (restPayerAmount.signum() < 0) {
+            throw new DebitException(
+                    "Not enough money in account with id: "
+                            + payer.getId()
+                            + "; required: " + bankTransaction.getAmount()
+                            + ", actual: " + payer.getAmount()
+            );
+        }
+        payer.setAmount(restPayerAmount);
+        recipient.setAmount(recipient.getAmount().add(bankTransaction.getAmount()));
+        bankAccountService.save(payer);
+        bankAccountService.save(recipient);
     }
 }
