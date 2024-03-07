@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS public.bank_transaction
     payment_id bigint NOT NULL,
     amount numeric NOT NULL,
     status character varying(20) NOT NULL,
+    is_deleted boolean DEFAULT FALSE,
     CONSTRAINT bank_transaction_pk PRIMARY KEY (id),
     CONSTRAINT payment_fk FOREIGN KEY (payment_id)
         REFERENCES public.payment (id)
