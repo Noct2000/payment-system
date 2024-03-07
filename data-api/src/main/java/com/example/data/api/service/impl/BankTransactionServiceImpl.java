@@ -1,5 +1,6 @@
 package com.example.data.api.service.impl;
 
+import com.example.data.api.dto.request.UpdateBankTransactionRequestDto;
 import com.example.data.api.exception.DebitException;
 import com.example.data.api.mapper.BankTransactionMapper;
 import com.example.data.api.model.BankAccount;
@@ -60,6 +61,19 @@ public class BankTransactionServiceImpl implements BankTransactionService {
     }
 
     @Override
+    @Transactional
+    public BankTransaction updateByRequestDto(
+            UpdateBankTransactionRequestDto updateBankTransactionRequestDto
+    ) {
+        Payment payment = paymentService.getById(
+                updateBankTransactionRequestDto.getPaymentId()
+        );
+        BankTransaction bankTransaction = bankTransactionMapper
+                .toModelFromUpdateDto(updateBankTransactionRequestDto, payment);
+        return update(bankTransaction);
+    }
+
+    @Override
     public List<BankTransaction> findAll() {
         return bankTransactionRepository.findAll();
     }
@@ -91,6 +105,7 @@ public class BankTransactionServiceImpl implements BankTransactionService {
                     + entity.getId()
                     + " is not exists");
         }
-        return bankTransactionRepository.save(entity);
+        bankTransactionRepository.save(entity);
+        return entity;
     }
 }

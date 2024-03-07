@@ -1,5 +1,6 @@
 package com.example.data.api.mapper;
 
+import com.example.data.api.dto.request.UpdateBankTransactionRequestDto;
 import com.example.data.api.dto.response.BankTransactionResponseDto;
 import com.example.data.api.model.BankTransaction;
 import com.example.data.api.model.Payment;
@@ -24,5 +25,17 @@ public class BankTransactionMapper {
                 .setPaymentId(bankTransaction.getPayment().getId())
                 .setAmount(bankTransaction.getAmount())
                 .setStatus(bankTransaction.getStatus());
+    }
+
+    public BankTransaction toModelFromUpdateDto(
+            UpdateBankTransactionRequestDto updateBankTransactionRequestDto,
+            Payment payment
+    ) {
+        return toModelFromPayment(payment)
+                .setId(updateBankTransactionRequestDto.getId())
+                .setCreationTime(updateBankTransactionRequestDto.getCreationTime())
+                .setPayment(payment)
+                .setAmount(updateBankTransactionRequestDto.getAmount())
+                .setStatus(updateBankTransactionRequestDto.getStatus());
     }
 }
