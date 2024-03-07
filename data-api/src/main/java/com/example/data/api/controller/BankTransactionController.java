@@ -7,7 +7,12 @@ import com.example.data.api.mapper.BankTransactionMapper;
 import com.example.data.api.model.BankTransaction;
 import com.example.data.api.service.BankTransactionService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,5 +47,21 @@ public class BankTransactionController {
         BankTransaction bankTransaction = bankTransactionService
                 .updateByRequestDto(updateBankTransactionRequestDto);
         return bankTransactionMapper.toResponseDto(bankTransaction);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deleteById(@PathVariable Long id) {
+        bankTransactionService.deleteById(id);
+        return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/payments/{id}")
+    public List<BankTransactionResponseDto> getByPaymentId(
+            @PathVariable(name = "id")
+            Long paymentId
+    ) {
+        List<BankTransaction> bankTransactions = bankTransactionService
+                .findAllByPaymentId(paymentId);
+        return bankTransactions.stream().map(bankTransactionMapper::toResponseDto).toList();
     }
 }
