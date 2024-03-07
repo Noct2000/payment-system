@@ -3,10 +3,11 @@
 CREATE TABLE IF NOT EXISTS public.bank_account
 (
     id bigint NOT NULL,
-    owner character varying(256) UNIQUE NOT NULL,
+    full_name character varying(256) NOT NULL,
     iban character varying(30) UNIQUE NOT NULL,
     account_number character varying(16) UNIQUE NOT NULL,
     amount numeric DEFAULT 0,
+    is_deleted boolean DEFAULT FALSE,
     CONSTRAINT bank_account_pk PRIMARY KEY (id)
 );
 
