@@ -1,9 +1,13 @@
 package com.example.data.api.service.impl;
 
+import com.example.data.api.exception.DebitException;
+import com.example.data.api.model.BankAccount;
 import com.example.data.api.model.BankTransaction;
 import com.example.data.api.repository.BankTransactionRepository;
+import com.example.data.api.service.BankAccountService;
 import com.example.data.api.service.BankTransactionService;
 import jakarta.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,10 +17,33 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BankTransactionServiceImpl implements BankTransactionService {
     private final BankTransactionRepository bankTransactionRepository;
+    private final BankAccountService bankAccountService;
 
     @Override
     public List<BankTransaction> findAllByPaymentId(Long paymentId) {
         return bankTransactionRepository.findAllByPaymentId(paymentId);
+    }
+
+    @Override
+    @Transactional
+    public BankTransaction createWithDebiting(BankTransaction bankTransaction) {
+        BankAccount payer = bankTransaction.getPayment().getPayer();
+        BankAccount recipient = bankTransaction.getPayment().getRecipient();
+        BigDecimal restPayerAmount = payer.getAmount().subtract(bankTransaction.getAmount());
+        if (restPayerAmount.signum() < 0) {
+            throw new DebitException(
+                    "Not enough money in account with id: "
+                            + payer.getId()
+                            + "; required: " + bankTransaction.getAmount()
+                            + ", actual: " + payer.getAmount()
+                    );
+        }
+        payer.setAmount(restPayerAmount);
+        recipient.setAmount(recipient.getAmount().add(bankTransaction.getAmount()));
+        bankAccountService.save(payer);
+        bankAccountService.save(recipient);
+        BankTransaction persistedBankTransaction = save(bankTransaction);
+        return bankTransaction;
     }
 
     @Override

@@ -30,7 +30,9 @@ public class PaymentController {
     public PaymentResponseDto create(
             @RequestBody @Valid CreatePaymentRequestDto createPaymentRequestDto
     ) {
-        Payment payment = paymentService.save(paymentMapper.toModel(createPaymentRequestDto));
+        Payment payment = paymentService.createWithFirstTransaction(
+                paymentMapper.toModel(createPaymentRequestDto)
+        );
         return paymentMapper.toResponseDto(payment);
     }
 

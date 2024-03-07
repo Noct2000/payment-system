@@ -7,4 +7,6 @@ public interface PaymentService extends CrudService<Payment> {
     List<Payment> findAllByInn(String inn);
 
     List<Payment> findAllByOkpo(String okpo);
+
+    Payment createWithFirstTransaction(Payment payment);
 }
