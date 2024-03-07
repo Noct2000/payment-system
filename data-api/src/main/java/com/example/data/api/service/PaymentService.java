@@ -8,5 +8,4 @@ public interface PaymentService extends CrudService<Payment> {
 
     List<Payment> findAllByOkpo(String okpo);
 
-    Payment createWithFirstTransaction(Payment payment);
 }

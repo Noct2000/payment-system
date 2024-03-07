@@ -5,6 +5,7 @@ import com.example.data.api.dto.request.UpdatePaymentRequestDto;
 import com.example.data.api.dto.response.PaymentResponseDto;
 import com.example.data.api.mapper.PaymentMapper;
 import com.example.data.api.model.Payment;
+import com.example.data.api.service.DebitingService;
 import com.example.data.api.service.PaymentService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -24,13 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
+    private final DebitingService debitingService;
     private final PaymentMapper paymentMapper;
 
     @PostMapping
     public PaymentResponseDto create(
             @RequestBody @Valid CreatePaymentRequestDto createPaymentRequestDto
     ) {
-        Payment payment = paymentService.createWithFirstTransaction(
+        Payment payment = debitingService.createPaymentWithFirstTransactionAndDebiting(
                 paymentMapper.toModel(createPaymentRequestDto)
         );
         return paymentMapper.toResponseDto(payment);

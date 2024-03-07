@@ -1,10 +1,7 @@
 package com.example.data.api.service.impl;
 
-import com.example.data.api.mapper.BankTransactionMapper;
-import com.example.data.api.model.BankTransaction;
 import com.example.data.api.model.Payment;
 import com.example.data.api.repository.PaymentRepository;
-import com.example.data.api.service.BankTransactionService;
 import com.example.data.api.service.PaymentService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
@@ -16,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
-    private final BankTransactionService bankTransactionService;
-    private final BankTransactionMapper bankTransactionMapper;
 
     @Override
     public List<Payment> findAll() {
@@ -52,7 +47,8 @@ public class PaymentServiceImpl implements PaymentService {
                             + entity.getId()
                             + " is not exists");
         }
-        return paymentRepository.save(entity);
+        paymentRepository.save(entity);
+        return entity;
     }
 
     @Override
@@ -63,14 +59,5 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<Payment> findAllByOkpo(String okpo) {
         return paymentRepository.findAllByOkpo(okpo);
-    }
-
-    @Override
-    @Transactional
-    public Payment createWithFirstTransaction(Payment payment) {
-        Payment persistedPayment = save(payment);
-        BankTransaction bankTransaction = bankTransactionMapper.toNewModelFromPayment(payment);
-        bankTransactionService.createWithDebiting(bankTransaction);
-        return persistedPayment;
     }
 }

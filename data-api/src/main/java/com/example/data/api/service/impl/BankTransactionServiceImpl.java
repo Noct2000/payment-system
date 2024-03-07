@@ -1,11 +1,14 @@
 package com.example.data.api.service.impl;
 
 import com.example.data.api.exception.DebitException;
+import com.example.data.api.mapper.BankTransactionMapper;
 import com.example.data.api.model.BankAccount;
 import com.example.data.api.model.BankTransaction;
+import com.example.data.api.model.Payment;
 import com.example.data.api.repository.BankTransactionRepository;
 import com.example.data.api.service.BankAccountService;
 import com.example.data.api.service.BankTransactionService;
+import com.example.data.api.service.PaymentService;
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class BankTransactionServiceImpl implements BankTransactionService {
     private final BankTransactionRepository bankTransactionRepository;
     private final BankAccountService bankAccountService;
+    private final BankTransactionMapper bankTransactionMapper;
+    private final PaymentService paymentService;
 
     @Override
     public List<BankTransaction> findAllByPaymentId(Long paymentId) {
@@ -42,8 +47,16 @@ public class BankTransactionServiceImpl implements BankTransactionService {
         recipient.setAmount(recipient.getAmount().add(bankTransaction.getAmount()));
         bankAccountService.save(payer);
         bankAccountService.save(recipient);
-        BankTransaction persistedBankTransaction = save(bankTransaction);
+        save(bankTransaction);
         return bankTransaction;
+    }
+
+    @Override
+    @Transactional
+    public BankTransaction createWithDebitingByPaymentId(Long paymentId) {
+        Payment payment = paymentService.getById(paymentId);
+        BankTransaction bankTransaction = bankTransactionMapper.toModelFromPayment(payment);
+        return createWithDebiting(bankTransaction);
     }
 
     @Override

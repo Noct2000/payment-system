@@ -7,4 +7,6 @@ public interface BankTransactionService extends CrudService<BankTransaction> {
     List<BankTransaction> findAllByPaymentId(Long paymentId);
 
     BankTransaction createWithDebiting(BankTransaction bankTransaction);
+
+    BankTransaction createWithDebitingByPaymentId(Long paymentId);
 }
