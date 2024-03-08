@@ -1,14 +1,17 @@
 package com.example.cronapp.scheduled;
 
-import lombok.extern.log4j.Log4j2;
+import com.example.cronapp.service.DebitService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-@Log4j2
+@RequiredArgsConstructor
 public class ScheduledTask {
-    @Scheduled(fixedRate = 60000)
+    private final DebitService debitService;
+
+    @Scheduled(fixedDelay = 60000)
     public void checkPayments() {
-        log.info("test");
+        debitService.createTransactionForPaymentsToDebiting();
     }
 }
