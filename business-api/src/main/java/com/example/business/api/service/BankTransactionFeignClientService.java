@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "bank-transaction", url = "${data-api}")
+@FeignClient(name = "bank-transaction", url = "${data_api}")
 public interface BankTransactionFeignClientService {
     @GetMapping("/transactions/payments/{payment_id}")
     List<BankTransactionResponseDto> getByPaymentId(
