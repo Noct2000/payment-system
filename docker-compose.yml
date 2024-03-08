@@ -1,0 +1,77 @@
+version: '3.8'
+services:
+  # DB
+  postgres:
+    platform: linux/amd64
+    image: 'postgres:15-alpine'
+    container_name: postgres
+    env_file: ./.env
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # DATA API
+  data_api:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: data-api
+    build:
+      context: ./data-api
+      dockerfile: Dockerfile
+    env_file: ./.env
+    container_name: data-api
+    ports:
+      - $DATA_API_LOCAL_PORT:$DATA_API_DOCKER_PORT
+      - $DATA_API_DEBUG_PORT:$DATA_API_DEBUG_PORT
+    environment:
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/$POSTGRES_DB
+      - spring.datasource.username=$POSTGRES_USER
+      - spring.datasource.password=$POSTGRES_PASSWORD
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -X GET localhost:8080/success" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # DATA API
+  business_api:
+    depends_on:
+      data_api:
+        condition: service_healthy
+    image: business-api
+    build:
+      context: ./business-api
+      dockerfile: Dockerfile
+    env_file: ./.env
+    container_name: business-api
+    ports:
+      - $BUSINESS_API_LOCAL_PORT:$BUSINESS_API_DOCKER_PORT
+      - $BUSINESS_API_DEBUG_PORT:$BUSINESS_API_DEBUG_PORT
+    environment:
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -X GET localhost:8081/success" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  # DATA API
+  cron_app:
+    depends_on:
+      business_api:
+        condition: service_healthy
+    image: cron_app
+    build:
+      context: ./cron-app
+      dockerfile: Dockerfile
+    env_file: ./.env
+    container_name: cron_app
+    ports:
+      - $CRON_APP_DEBUG_PORT:$CRON_APP_DEBUG_PORT
+    environment:
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
