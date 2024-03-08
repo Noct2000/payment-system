@@ -81,6 +81,11 @@ public class BankTransactionServiceImpl implements BankTransactionService {
     }
 
     @Override
+    public List<BankTransaction> getLastWithUniquePaymentId() {
+        return bankTransactionRepository.getLastWithUniquePaymentId();
+    }
+
+    @Override
     public List<BankTransaction> findAll() {
         return bankTransactionRepository.findAll();
     }

@@ -16,4 +16,6 @@ public interface BankTransactionService extends CrudService<BankTransaction> {
     );
 
     BankTransaction rollbackById(Long id);
+
+    List<BankTransaction> getLastWithUniquePaymentId();
 }
