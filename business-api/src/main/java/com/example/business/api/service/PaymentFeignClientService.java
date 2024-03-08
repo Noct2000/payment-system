@@ -9,5 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "payment", url = "${data-api}")
 public interface PaymentFeignClientService {
     @GetMapping("/payments/by-inn/{inn}")
-    List<PaymentResponseDto> getByPayment(@PathVariable String inn);
+    List<PaymentResponseDto> getByInn(@PathVariable String inn);
+
+    @GetMapping("/payments/by-okpo/{okpo}")
+    List<PaymentResponseDto> getByOkpo(@PathVariable String okpo);
 }

@@ -17,6 +17,11 @@ public class PaymentController {
 
     @GetMapping("/by-inn/{inn}")
     List<PaymentResponseDto> getByPayment(@PathVariable String inn) {
-        return paymentFeignClientService.getByPayment(inn);
+        return paymentFeignClientService.getByInn(inn);
+    }
+
+    @GetMapping("/by-okpo/{okpo}")
+    List<PaymentResponseDto> getByOkpo(@PathVariable String okpo) {
+        return paymentFeignClientService.getByOkpo(okpo);
     }
 }
