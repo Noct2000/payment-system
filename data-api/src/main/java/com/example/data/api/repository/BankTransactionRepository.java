@@ -37,4 +37,19 @@ public interface BankTransactionRepository extends JpaRepository<BankTransaction
             join fetch p.recipient
             """)
     List<BankTransaction> findAll();
+
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT DISTINCT ON (payment_id) bt.*
+                    FROM bank_transaction bt
+                    INNER JOIN payment p on p.id = bt.payment_id
+                    INNER JOIN bank_account ba on ba.id = p.payer_id
+                    WHERE bt.is_deleted = false
+                        AND p.is_deleted = false
+                        AND ba.is_deleted = false
+                    ORDER BY payment_id, creation_time DESC
+                    """
+    )
+    List<BankTransaction> getLastWithUniquePaymentId();
 }

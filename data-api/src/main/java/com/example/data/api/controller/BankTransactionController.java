@@ -71,4 +71,11 @@ public class BankTransactionController {
         BankTransaction bankTransaction = bankTransactionService.rollbackById(id);
         return bankTransactionMapper.toResponseDto(bankTransaction);
     }
+
+    @GetMapping("/last-with-unique-payment-id")
+    public List<BankTransactionResponseDto> getLastWithUniquePaymentId() {
+        List<BankTransaction> bankTransactions = bankTransactionService
+                .getLastWithUniquePaymentId();
+        return bankTransactions.stream().map(bankTransactionMapper::toResponseDto).toList();
+    }
 }
