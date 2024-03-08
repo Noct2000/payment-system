@@ -22,4 +22,7 @@ public interface BankTransactionFeignClientService {
             @RequestBody
             CreateBankTransactionRequestDto createBankTransactionRequestDto
     );
+
+    @GetMapping("/transactions/last-with-unique-payment-id")
+    List<BankTransactionResponseDto> getLastWithUniquePaymentId();
 }

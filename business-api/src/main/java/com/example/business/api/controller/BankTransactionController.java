@@ -26,7 +26,7 @@ public class BankTransactionController {
     }
 
     @PostMapping
-    BankTransactionResponseDto create(
+    public BankTransactionResponseDto create(
             @RequestBody
             CreateBankTransactionRequestDto createBankTransactionRequestDto
     ) {

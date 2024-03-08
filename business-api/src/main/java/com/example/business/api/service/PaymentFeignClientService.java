@@ -13,4 +13,7 @@ public interface PaymentFeignClientService {
 
     @GetMapping("/payments/by-okpo/{okpo}")
     List<PaymentResponseDto> getByOkpo(@PathVariable String okpo);
+
+    @GetMapping("/payments/{id}")
+    PaymentResponseDto getById(@PathVariable Long id);
 }
