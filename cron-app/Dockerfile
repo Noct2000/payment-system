@@ -11,4 +11,4 @@ FROM openjdk:17-oracle
 ARG JAR_FILE=target/*.jar
 COPY --from=builder /build/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "/app.jar"]
-EXPOSE 5005
+EXPOSE 5007

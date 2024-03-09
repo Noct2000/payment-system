@@ -32,7 +32,7 @@ services:
       - spring.datasource.url=jdbc:postgresql://postgres:5432/$POSTGRES_DB
       - spring.datasource.username=$POSTGRES_USER
       - spring.datasource.password=$POSTGRES_PASSWORD
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:$DATA_API_DEBUG_PORT
     healthcheck:
       test: [ "CMD-SHELL", "curl -X GET localhost:8080/success" ]
       interval: 10s
@@ -54,7 +54,7 @@ services:
       - $BUSINESS_API_LOCAL_PORT:$BUSINESS_API_DOCKER_PORT
       - $BUSINESS_API_DEBUG_PORT:$BUSINESS_API_DEBUG_PORT
     environment:
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:$BUSINESS_API_DEBUG_PORT
     healthcheck:
       test: [ "CMD-SHELL", "curl -X GET localhost:8081/success" ]
       interval: 10s
@@ -74,4 +74,4 @@ services:
     ports:
       - $CRON_APP_DEBUG_PORT:$CRON_APP_DEBUG_PORT
     environment:
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:$CRON_APP_DEBUG_PORT
