@@ -11,12 +11,24 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * <p>PaymentServiceImpl is basic service bean</p>
+ * This service is necessary for getting payments
+ * that require creating new bank transaction.
+ * <b>Note:</b>
+ * This service requires interaction with data-api endpoints.
+ */
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
     private final BankTransactionFeignClientService bankTransactionFeignClientService;
     private final PaymentFeignClientService paymentFeignClientService;
 
+    /**
+     * @return list of payments that require new bank transaction
+     * <b>Condition:</b>
+     * Last bank transaction time creation + payment.minsBeforeDebiting is before or equal now
+     */
     @Override
     public List<PaymentResponseDto> getPaymentsToTransaction() {
         List<BankTransactionResponseDto> lastTransactionsWithUniquePaymentId =
