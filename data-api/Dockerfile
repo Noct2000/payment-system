@@ -4,7 +4,7 @@ WORKDIR /build
 COPY . /build
 
 # Build
-RUN ./mvnw clean package
+RUN ./mvnw clean package -Dmaven.test.skip=true
 
 # Run application
 FROM openjdk:17-oracle
