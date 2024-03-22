@@ -1,0 +1,9 @@
+{
+  "inn": "123456789012",
+  "payer_id": 1,
+  "recipient_id": 2,
+  "bic": "123456",
+  "okpo": "1234567890",
+  "mins_before_debiting": 1,
+  "amount": 100
+}
