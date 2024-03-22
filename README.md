@@ -46,3 +46,6 @@ Ensure you have `docker-compose` installed and that the following ports are avai
 ## How to Test
 
 To test the endpoints, you can import the Postman collection from [this link](https://www.postman.com/noct2000/workspace/public-workspace/collection/20171165-f97e96f5-1599-4d3a-85d3-8e139af22904?action=share&creator=20171165&active-environment=20171165-12770c54-46ec-424f-9351-1390726ebec8).
+
+## Swagger
+Also, you can explore documentation for data-api by following link http://localhost:8080/swagger-ui/index.html#
